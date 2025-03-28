@@ -135,4 +135,4 @@ Contributions are welcome! Feel free to fork this repository, create new feature
 
 ---
 
-#### *<p align="center"> Coded by [MIDØ](https://github.com/Midohajhouj)</p>*
+#### **<p align="center"> Coded by [LIONMAD](https://github.com/Midohajhouj)</p>**
