@@ -9,7 +9,7 @@
 # Short-Description: Brute Force Toolkit
 # Description:       A toolkit designed for ethical penetration testing and brute-force attacks on various services (SSH, FTP, SMTP, etc.).
 # Author:
-# + MIDØ <https://github.com/Midohajhouj>
+# + LIONMAD <https://github.com/Midohajhouj>
 # License:           MIT License - https://opensource.org/licenses/MIT
 ### END INIT INFO ###
 
