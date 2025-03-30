@@ -3,7 +3,6 @@
 ![Version](https://img.shields.io/badge/Version-1.0-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Author](https://img.shields.io/badge/Author-MIDØ-orange)
-![Toolkit Banner](https://example.com/banner.png) *(optional banner image)*
 
 Advanced penetration testing toolkit with brute-force capabilities for multiple services.
 
