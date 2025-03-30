@@ -1,0 +1,13 @@
+2025-03-29 23:24:00,806 - INFO - Downloaded default wordlist: common_passwords.txt
+2025-03-29 23:24:01,102 - INFO - [32m[+] Success: FTP - mido:mido[0m
+2025-03-29 23:24:01,102 - INFO - [36m[*] Password strength: 1/10[0m
+2025-03-29 23:24:01,102 - INFO - [36m    - Too short (less than 8 characters)[0m
+2025-03-29 23:24:01,102 - INFO - [36m    - Contains lowercase letters[0m
+2025-03-29 23:24:01,102 - INFO - [36m    - Low entropy (predictable)[0m
+2025-03-29 23:24:04,028 - INFO - [32m[+] Success: FTP - antix:antix[0m
+2025-03-29 23:24:04,028 - INFO - [36m[*] Password strength: 1/10[0m
+2025-03-29 23:24:04,028 - INFO - [36m    - Too short (less than 8 characters)[0m
+2025-03-29 23:24:04,028 - INFO - [36m    - Contains lowercase letters[0m
+2025-03-29 23:24:04,028 - INFO - [36m    - Low entropy (predictable)[0m
+2025-03-29 23:24:11,804 - INFO - Attack completed. Success: 2, Failed: 142
+2025-03-29 23:24:11,805 - INFO - Session state saved

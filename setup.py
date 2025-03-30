@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 ### BEGIN INIT INFO
-# Provides:          brute_force_toolkit_installer
+# Provides:          brute_installer
 # Required-Start:    $network $remote_fs
 # Required-Stop:     $remote_fs
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Brute Force Toolkit
-# Description:       A toolkit designed for ethical penetration testing and brute-force attacks on various services (SSH, FTP, SMTP, etc.).
-# Author:
-# + LIONMAD <https://github.com/Midohajhouj>
+# Short-Description: Advanced Brute Force Toolkit
+# Description:       A powerful penetration testing tool with brute force capabilities for multiple services.
 # License:           MIT License - https://opensource.org/licenses/MIT
-## END INIT INFO #
+### END INIT INFO ###
 
 import os
 import sys
@@ -36,11 +34,11 @@ def display_banner():
     print(f"{BLUE}")
     print("██████████████████████████████████████████████████")
     print("██                                              ██")
-    print("██       Brute Force Toolkit by LIONMAD         ██")
-    print("██                Setup Script                  ██")
-    print("██       This script sets up the environment    ██")
-    print("██           for running the Brute Force        ██")
-    print("██                  Toolkit                     ██")
+    print("██          Brute Force Toolkit Setup           ██")
+    print("██       Advanced Penetration Testing           ██")
+    print("██                                              ██")
+    print("██  Supports: SSH, FTP, HTTP, Databases,        ██")
+    print("██  Web Apps, and more with brute force         ██")
     print("██                                              ██")
     print("██████████████████████████████████████████████████")
     print(f"{RESET}")
@@ -57,7 +55,11 @@ def install_system_dependencies():
     print(f"{GREEN}[INFO]{RESET} Installing required system packages...")
     try:
         subprocess.run(
-            ["apt-get", "install", "-y", "python3", "python3-pip", "python3-venv", "libssl-dev", "libffi-dev", "build-essential"],
+            ["apt-get", "install", "-y", 
+             "python3", "python3-pip", "python3-venv",
+             "libssl-dev", "libffi-dev",
+             "tesseract-ocr", "libtesseract-dev",
+             "nmap", "tor", "proxychains"],
             check=True,
         )
     except subprocess.CalledProcessError as e:
@@ -68,14 +70,33 @@ def install_python_packages():
     """Install required Python packages and log the output."""
     print(f"{GREEN}[INFO]{RESET} Installing required Python packages (output logged to {PIP_LOG})...")
     packages = [
-        "paramiko==3.1.0",  # For SSH brute-forcing
-        "requests==2.28.2",  # For HTTP requests
-        "pytesseract==0.3.10",  # For CAPTCHA handling
-        "Pillow==9.5.0",  # For CAPTCHA handling
-        "bcrypt==4.0.1",  # For password hashing
-        "socks==1.0.0",  # For SOCKS proxy support
-        "tqdm==4.64.1",  # For progress bars
-        "colorama==0.4.6",  # For colored terminal output
+        "argparse",
+        "requests",
+        "paramiko",
+        "mysql-connector-python",
+        "pytesseract",
+        "bcrypt",
+        "socks",
+        "tqdm",
+        "selenium",
+        "beautifulsoup4",
+        "dnspython",
+        "python-nmap",
+        "ldap3",
+        "cryptography",
+        "mechanize",
+        "fake-useragent",
+        "pyodbc",
+        "psycopg2-binary",
+        "pymongo",
+        "redis",
+        "pyfiglet",
+        "colorama",
+        "scapy",
+        "sqlalchemy",
+        "python-whois",
+        "pyOpenSSL",
+        "pillow"
     ]
 
     for package in packages:
@@ -93,7 +114,7 @@ def install_python_packages():
             sys.exit(1)
 
 def create_symlink():
-    """Create a symlink for easy access to the Brute Force Toolkit."""
+    """Create a symlink for easy access to the brute force toolkit."""
     print(f"{YELLOW}[*]{RESET} Creating symlink for easy access...")
 
     # Check if the source file exists
@@ -125,8 +146,42 @@ def create_symlink():
         print(f"{RED}[ERROR]{RESET} Symlink creation failed.")
         sys.exit(1)
 
+def create_directories():
+    """Create required directories for the toolkit."""
+    print(f"{GREEN}[INFO]{RESET} Creating required directories...")
+    directories = ['wordlists', 'results', 'temp']
+    
+    for directory in directories:
+        try:
+            os.makedirs(directory, exist_ok=True)
+            print(f"{GREEN}[+] Created directory: {directory}{RESET}")
+        except Exception as e:
+            print(f"{RED}[ERROR]{RESET} Failed to create directory {directory}: {e}")
+            sys.exit(1)
+
+def download_default_wordlists():
+    """Download default wordlists if they don't exist."""
+    print(f"{GREEN}[INFO]{RESET} Checking for default wordlists...")
+    wordlists = {
+        'common_usernames.txt': 'https://raw.githubusercontent.com/danielmiessler/SecLists/master/Usernames/top-usernames-shortlist.txt',
+        'common_passwords.txt': 'https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Common-Credentials/10-million-password-list-top-10000.txt',
+        'common_subdomains.txt': 'https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/DNS/subdomains-top1million-5000.txt'
+    }
+
+    for filename, url in wordlists.items():
+        filepath = os.path.join('wordlists', filename)
+        if not os.path.exists(filepath):
+            try:
+                print(f"{YELLOW}[*]{RESET} Downloading {filename}...")
+                subprocess.run(["wget", "-O", filepath, url], check=True)
+                print(f"{GREEN}[+] Successfully downloaded {filename}{RESET}")
+            except subprocess.CalledProcessError as e:
+                print(f"{RED}[ERROR]{RESET} Failed to download {filename}: {e}")
+                # Not critical, so continue
+                continue
+
 class CustomInstall(install):
-    """Custom installation class to handle system dependencies and symlink creation."""
+    """Custom installation class to handle system dependencies and setup."""
 
     def run(self):
         """Run the custom installation process."""
@@ -143,48 +198,78 @@ class CustomInstall(install):
         # Install Python packages
         install_python_packages()
 
+        # Create required directories
+        create_directories()
+
+        # Download default wordlists
+        download_default_wordlists()
+
         # Create a symlink for easy access
         create_symlink()
 
         # Completion message
-        print(f"{GREEN}[INFO]{RESET} Setup complete! The necessary packages have been installed system-wide.")
-        print(f"{BLUE}You can now run the Brute Force Toolkit script directly using:{RESET}")
-        print(f"{GREEN}brute{RESET}")
+        print(f"{GREEN}[INFO]{RESET} Setup complete! Brute Force Toolkit is now ready to use.")
+        print(f"{BLUE}You can now run the tool using:{RESET}")
+        print(f"{GREEN}brute --help{RESET}")
 
         print(f"{BLUE}")
         print("████████████████████████████████████████████████████")
         print("██                                                ██")
-        print("██               Setup is complete                ██")
-        print("██                 MIDØ SALUTES YOU               ██")
+        print("██           Installation Complete               ██")
+        print("██      Brute Force Toolkit Ready               ██")
         print("██                                                ██")
         print("████████████████████████████████████████████████████")
         print(f"{RESET}")
 
 # Define the setup configuration
 setup(
-    name="brute_force_toolkit",
-    version="1.0",
-    author="MIDØ",
-    author_email="midohajhouj11@gmail.com",
-    description="A toolkit designed for ethical penetration testing and brute-force attacks on various services (SSH, FTP, SMTP, etc.).",
-    long_description=open("README.md").read(),
+    name="brute-toolkit",
+    version="4.1",
+    author="LIONMAD",
+    description="Advanced brute force toolkit for penetration testing",
+    long_description=open("README.md").read() if os.path.exists("README.md") else "Advanced brute force toolkit",
     long_description_content_type="text/markdown",
-    url="https://github.com/Midohajhouj/Brute-Force-Toolkit",
+    url="https://github.com/Midohajhouj/brute",
     packages=find_packages(),
     install_requires=[
-        "paramiko==3.1.0",
-        "requests==2.28.2",
-        "pytesseract==0.3.10",
-        "Pillow==9.5.0",
-        "bcrypt==4.0.1",
-        "socks==1.0.0",
-        "tqdm==4.64.1",
-        "colorama==0.4.6",
+        "argparse",
+        "requests>=2.25.1",
+        "paramiko>=2.7.2",
+        "mysql-connector-python>=8.0.23",
+        "pytesseract>=0.3.8",
+        "bcrypt>=3.2.0",
+        "socks>=1.0.0",
+        "tqdm>=4.59.0",
+        "selenium>=3.141.0",
+        "beautifulsoup4>=4.9.3",
+        "dnspython>=2.1.0",
+        "python-nmap>=0.7.1",
+        "ldap3>=2.9.1",
+        "cryptography>=3.4.7",
+        "mechanize>=0.4.5",
+        "fake-useragent>=0.1.11",
+        "pyodbc>=4.0.30",
+        "psycopg2-binary>=2.8.6",
+        "pymongo>=3.11.3",
+        "redis>=3.5.3",
+        "pyfiglet>=0.8.post1",
+        "colorama>=0.4.4",
+        "scapy>=2.4.5",
+        "sqlalchemy>=1.4.7",
+        "python-whois>=0.8.0",
+        "pyOpenSSL>=20.0.1",
+        "pillow>=8.1.2"
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
+        "Operating System :: POSIX :: Linux",
+        "Development Status :: 4 - Beta",
+        "Environment :: Console",
+        "Intended Audience :: Information Technology",
+        "Intended Audience :: System Administrators",
+        "Topic :: Security",
+        "Topic :: System :: Systems Administration",
     ],
     python_requires='>=3.6',
     entry_points={
