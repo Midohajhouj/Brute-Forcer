@@ -28,14 +28,9 @@
 
 2. **Install the toolkit**:
    ```bash
-   git clone https://github.com/yourusername/brute-force-toolkit.git
-   cd brute-force-toolkit
-   sudo python3 setup.py install
-   ```
-
-3. **Install dependencies**:
-   ```bash
-   pip3 install -r requirements.txt --break-system-packages
+   git clone https://github.com/Midohajhouj/Brute-Forcer.git
+   cd Brute-Forcer
+   sudo ./setup.py install
    ```
 
 ## Configuration
@@ -171,4 +166,4 @@ This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) f
 
 If you encounter any issues or have feature requests, please open an issue on [GitHub Issues](https://github.com/yourusername/brute-force-toolkit/issues).
 
-#### *<p align="center"> Coded by <a href="https://github.com/yourusername">YourUsername</a> </p>*
+#### **<p align="center"> Developed by <a href="https://github.com/Midohajhouj">LIONMAD</a> </p>**
