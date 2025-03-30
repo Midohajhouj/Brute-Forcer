@@ -1,10 +1,12 @@
-# Brute Force Toolkit v1.0 (Unstable)
+<p align="center">
+  <img src="https://img.shields.io/badge/Platform-Linux-a80505?style=plastic">
+  <img src="https://img.shields.io/badge/License-MIT-a80505?style=plastic">
+  <img src="https://img.shields.io/github/v/release/Midohajhouj/DDoS-Toolkit?label=Version&color=a80505&style=plastic">
+  <img src="https://img.shields.io/badge/Open%20Source-Yes-darkviolet?style=plastic&color=a80505">
 
-![Version](https://img.shields.io/badge/Version-1.0-blue)
-![License](https://img.shields.io/badge/License-MIT-green)
-![Author](https://img.shields.io/badge/Author-MIDØ-orange)
-
-Advanced penetration testing toolkit with brute-force capabilities for multiple services.
+ # Brute Force Toolkit v1.0 (Unstable)
+ 
+   Advanced penetration testing toolkit with brute-force capabilities for multiple services.
 
 ## Features
 
