@@ -19,7 +19,7 @@
 # Changelog:         - Initial release.
 #                    - Added multi-service support (SSH, FTP, HTTP).
 #                    - Optimized password list loading and attack speed.
-### END INIT INFO ###
+### END INIT INFO ##
 
 import sys
 import importlib
