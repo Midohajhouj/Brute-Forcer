@@ -1,4 +1,4 @@
-<p align="center"> Brute Forcer v.1.0 (Unstable) </p>
+# <p align="center"> Brute Forcer v.1.0 (Unstable) </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-Linux-a80505?style=plastic">
