@@ -1,5 +1,5 @@
-#!/bin/bash
-
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 ### BEGIN INIT INFO
 # Provides:          brute_installer
 # Required-Start:    $network $remote_fs
@@ -11,200 +11,274 @@
 # License:           MIT License - https://opensource.org/licenses/MIT
 ### END INIT INFO ###
 
+import os
+import sys
+import subprocess
+import logging
+from setuptools import setup, find_packages
+from setuptools.command.install import install
+
 # Colors for stylish output
-YELLOW="\033[1;33m"
-GREEN="\033[1;32m"
-BLUE="\033[1;34m"
-RED="\033[1;31m"
-RESET="\033[0m"  # Reset color
+YELLOW = "\033[1;33m"
+GREEN = "\033[1;32m"
+BLUE = "\033[1;34m"
+RED = "\033[1;31m"
+RESET = "\033[0m"  # Reset color
 
 # Logging configuration
-PIP_LOG="pip_install.log"
+PIP_LOG = "pip_install.log"
+logging.basicConfig(filename=PIP_LOG, level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-display_banner() {
-    # Display a stylish banner
-    echo -e "${BLUE}"
-    echo "██████████████████████████████████████████████████"
-    echo "██                                              ██"
-    echo "██          Brute Force Toolkit Setup           ██"
-    echo "██       Advanced Penetration Testing           ██"
-    echo "██                                              ██"
-    echo "██  Supports: SSH, FTP, HTTP, Databases,        ██"
-    echo "██  Web Apps, and more with brute force         ██"
-    echo "██                                              ██"
-    echo "██████████████████████████████████████████████████"
-    echo -e "${RESET}"
-}
+def display_banner():
+    """Display a stylish banner."""
+    print(f"{BLUE}")
+    print("██████████████████████████████████████████████████")
+    print("██                                              ██")
+    print("██          Brute Force Toolkit Setup           ██")
+    print("██       Advanced Penetration Testing           ██")
+    print("██                                              ██")
+    print("██  Supports: SSH, FTP, HTTP, Databases,        ██")
+    print("██  Web Apps, and more with brute force         ██")
+    print("██                                              ██")
+    print("██████████████████████████████████████████████████")
+    print(f"{RESET}")
 
-install_system_dependencies() {
-    echo -e "${GREEN}[INFO]${RESET} Updating package list..."
-    if ! apt-get update -y; then
-        echo -e "${RED}[ERROR]${RESET} Failed to update package list"
-        exit 1
-    fi
+def install_system_dependencies():
+    """Install system dependencies using apt-get."""
+    print(f"{GREEN}[INFO]{RESET} Updating package list...")
+    try:
+        subprocess.run(["apt-get", "update", "-y"], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"{RED}[ERROR]{RESET} Failed to update package list: {e}")
+        sys.exit(1)
 
-    echo -e "${GREEN}[INFO]${RESET} Installing required system packages..."
-    if ! apt-get install -y \
-        python3 python3-pip python3-venv \
-        libssl-dev libffi-dev \
-        tesseract-ocr libtesseract-dev \
-        nmap tor proxychains; then
-        echo -e "${RED}[ERROR]${RESET} Failed to install system packages"
-        exit 1
-    fi
-}
+    print(f"{GREEN}[INFO]{RESET} Installing required system packages...")
+    try:
+        subprocess.run(
+            ["apt-get", "install", "-y", 
+             "python3", "python3-pip", "python3-venv",
+             "libssl-dev", "libffi-dev",
+             "tesseract-ocr", "libtesseract-dev",
+             "nmap", "tor", "proxychains"],
+            check=True,
+        )
+    except subprocess.CalledProcessError as e:
+        print(f"{RED}[ERROR]{RESET} Failed to install system packages: {e}")
+        sys.exit(1)
 
-install_python_packages() {
-    echo -e "${GREEN}[INFO]${RESET} Installing required Python packages (output logged to ${PIP_LOG})..."
-    local packages=(
-        argparse
-        requests
-        paramiko
-        mysql-connector-python
-        pytesseract
-        bcrypt
-        socks
-        tqdm
-        selenium
-        beautifulsoup4
-        dnspython
-        python-nmap
-        ldap3
-        cryptography
-        mechanize
-        fake-useragent
-        pyodbc
-        psycopg2-binary
-        pymongo
-        redis
-        pyfiglet
-        colorama
-        scapy
-        sqlalchemy
-        python-whois
-        pyOpenSSL
-        pillow
-    )
+def install_python_packages():
+    """Install required Python packages and log the output."""
+    print(f"{GREEN}[INFO]{RESET} Installing required Python packages (output logged to {PIP_LOG})...")
+    packages = [
+        "argparse",
+        "requests",
+        "paramiko",
+        "mysql-connector-python",
+        "pytesseract",
+        "bcrypt",
+        "socks",
+        "tqdm",
+        "selenium",
+        "beautifulsoup4",
+        "vobject",
+        "dnspython",
+        "python-nmap",
+        "ldap3",
+        "cryptography",
+        "mechanize",
+        "fake-useragent",
+        "pyodbc",
+        "psycopg2-binary",
+        "pymongo",
+        "redis",
+        "pyfiglet",
+        "colorama",
+        "scapy",
+        "sqlalchemy",
+        "python-whois",
+        "pyOpenSSL",
+        "pillow"
+    ]
 
-    for package in "${packages[@]}"; do
-        if ! pip install --break-system-packages "$package" >> "$PIP_LOG" 2>&1; then
-            echo -e "${RED}[ERROR]${RESET} Failed to install ${package}. Check ${PIP_LOG} for details."
-            exit 1
-        fi
-        echo "$(date) - INFO - Successfully installed $package" >> "$PIP_LOG"
-    done
-}
+    for package in packages:
+        try:
+            subprocess.run(
+                ["pip", "install", "--break-system-packages", package],
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            logging.info(f"Successfully installed {package}")
+        except subprocess.CalledProcessError as e:
+            logging.error(f"Failed to install {package}: {e.stderr.decode()}")
+            print(f"{RED}[ERROR]{RESET} Failed to install {package}. Check {PIP_LOG} for details.")
+            sys.exit(1)
 
-create_symlink() {
-    echo -e "${YELLOW}[*]${RESET} Creating symlink for easy access..."
+def create_symlink():
+    """Create a symlink for easy access to the brute force toolkit."""
+    print(f"{YELLOW}[*]{RESET} Creating symlink for easy access...")
 
     # Check if the source file exists
-    if [ ! -f "brute.py" ]; then
-        echo -e "${RED}[ERROR]${RESET} brute.py not found in the current directory."
-        exit 1
-    fi
+    if not os.path.isfile("brute.py"):
+        print(f"{RED}[ERROR]{RESET} brute.py not found in the current directory.")
+        sys.exit(1)
 
     # Remove existing symlink if present
-    if [ -e "/usr/local/bin/brute" ]; then
-        echo -e "${YELLOW}[INFO]${RESET} Removing existing symlink..."
-        if ! sudo rm "/usr/local/bin/brute"; then
-            echo -e "${RED}[ERROR]${RESET} Failed to remove existing symlink"
-            exit 1
-        fi
-    fi
+    if os.path.exists("/usr/local/bin/brute"):
+        print(f"{YELLOW}[INFO]{RESET} Removing existing symlink...")
+        try:
+            subprocess.run(["sudo", "rm", "/usr/local/bin/brute"], check=True)
+        except subprocess.CalledProcessError as e:
+            print(f"{RED}[ERROR]{RESET} Failed to remove existing symlink: {e}")
+            sys.exit(1)
 
     # Create a new symlink
-    if ! sudo cp "brute.py" "/usr/local/bin/brute"; then
-        echo -e "${RED}[ERROR]${RESET} Failed to copy brute.py to /usr/local/bin"
-        exit 1
-    fi
-
-    if ! sudo chmod +x "/usr/local/bin/brute"; then
-        echo -e "${RED}[ERROR]${RESET} Failed to make brute executable"
-        exit 1
-    fi
+    try:
+        subprocess.run(["sudo", "cp", "brute.py", "/usr/local/bin/brute"], check=True)
+        subprocess.run(["sudo", "chmod", "+x", "/usr/local/bin/brute"], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"{RED}[ERROR]{RESET} Failed to create symlink: {e}")
+        sys.exit(1)
 
     # Verify symlink creation
-    if [ -e "/usr/local/bin/brute" ]; then
-        echo -e "${GREEN}[SUCCESS]${RESET} Symlink created! You can now run 'brute' from anywhere."
-    else
-        echo -e "${RED}[ERROR]${RESET} Symlink creation failed."
-        exit 1
-    fi
-}
+    if os.path.exists("/usr/local/bin/brute"):
+        print(f"{GREEN}[SUCCESS]{RESET} Symlink created! You can now run 'brute' from anywhere.")
+    else:
+        print(f"{RED}[ERROR]{RESET} Symlink creation failed.")
+        sys.exit(1)
 
-create_directories() {
-    echo -e "${GREEN}[INFO]${RESET} Creating required directories..."
-    local directories=('wordlists' 'results' 'temp')
+def create_directories():
+    """Create required directories for the toolkit."""
+    print(f"{GREEN}[INFO]{RESET} Creating required directories...")
+    directories = ['wordlists', 'results', 'temp']
     
-    for directory in "${directories[@]}"; do
-        if ! mkdir -p "$directory"; then
-            echo -e "${RED}[ERROR]${RESET} Failed to create directory ${directory}"
-            exit 1
-        fi
-        echo -e "${GREEN}[+] Created directory: ${directory}${RESET}"
-    done
-}
+    for directory in directories:
+        try:
+            os.makedirs(directory, exist_ok=True)
+            print(f"{GREEN}[+] Created directory: {directory}{RESET}")
+        except Exception as e:
+            print(f"{RED}[ERROR]{RESET} Failed to create directory {directory}: {e}")
+            sys.exit(1)
 
-download_default_wordlists() {
-    echo -e "${GREEN}[INFO]${RESET} Checking for default wordlists..."
-    declare -A wordlists=(
-        ['common_usernames.txt']='https://raw.githubusercontent.com/danielmiessler/SecLists/master/Usernames/top-usernames-shortlist.txt'
-        ['common_passwords.txt']='https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Common-Credentials/10-million-password-list-top-10000.txt'
-        ['common_subdomains.txt']='https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/DNS/subdomains-top1million-5000.txt'
-    )
+def download_default_wordlists():
+    """Download default wordlists if they don't exist."""
+    print(f"{GREEN}[INFO]{RESET} Checking for default wordlists...")
+    wordlists = {
+        'common_usernames.txt': 'https://raw.githubusercontent.com/danielmiessler/SecLists/master/Usernames/top-usernames-shortlist.txt',
+        'common_passwords.txt': 'https://raw.githubusercontent.com/danielmiessler/SecLists/master/Passwords/Common-Credentials/10-million-password-list-top-10000.txt',
+        'common_subdomains.txt': 'https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/DNS/subdomains-top1million-5000.txt'
+    }
 
-    for filename in "${!wordlists[@]}"; do
-        filepath="wordlists/$filename"
-        if [ ! -e "$filepath" ]; then
-            echo -e "${YELLOW}[*]${RESET} Downloading $filename..."
-            if ! wget -O "$filepath" "${wordlists[$filename]}"; then
-                echo -e "${RED}[ERROR]${RESET} Failed to download $filename"
+    for filename, url in wordlists.items():
+        filepath = os.path.join('wordlists', filename)
+        if not os.path.exists(filepath):
+            try:
+                print(f"{YELLOW}[*]{RESET} Downloading {filename}...")
+                subprocess.run(["wget", "-O", filepath, url], check=True)
+                print(f"{GREEN}[+] Successfully downloaded {filename}{RESET}")
+            except subprocess.CalledProcessError as e:
+                print(f"{RED}[ERROR]{RESET} Failed to download {filename}: {e}")
                 # Not critical, so continue
                 continue
-            fi
-            echo -e "${GREEN}[+] Successfully downloaded $filename${RESET}"
-        fi
-    done
-}
 
-main() {
-    display_banner
+class CustomInstall(install):
+    """Custom installation class to handle system dependencies and setup."""
 
-    # Ensure the script is being run as root or with sudo
-    if [ "$(id -u)" -ne 0 ]; then
-        echo -e "${RED}[ERROR]${RESET} This script must be run as root or with sudo."
-        exit 1
-    fi
+    def run(self):
+        """Run the custom installation process."""
+        display_banner()
 
-    # Install system dependencies
-    install_system_dependencies
+        # Ensure the script is being run as root or with sudo
+        if os.geteuid() != 0:
+            print(f"{RED}[ERROR]{RESET} This script must be run as root or with sudo.")
+            sys.exit(1)
 
-    # Install Python packages
-    install_python_packages
+        # Install system dependencies
+        install_system_dependencies()
 
-    # Create required directories
-    create_directories
+        # Install Python packages
+        install_python_packages()
 
-    # Download default wordlists
-    download_default_wordlists
+        # Create required directories
+        create_directories()
 
-    # Create a symlink for easy access
-    create_symlink
+        # Download default wordlists
+        download_default_wordlists()
 
-    # Completion message
-    echo -e "${GREEN}[INFO]${RESET} Setup complete! Brute Force Toolkit is now ready to use."
-    echo -e "${BLUE}You can now run the tool using:${RESET}"
-    echo -e "${GREEN}brute --help${RESET}"
+        # Create a symlink for easy access
+        create_symlink()
 
-    echo -e "${BLUE}"
-    echo "████████████████████████████████████████████████████"
-    echo "██                                                ██"
-    echo "██           Installation Complete               ██"
-    echo "██      Brute Force Toolkit Ready               ██"
-    echo "██                                                ██"
-    echo "████████████████████████████████████████████████████"
-    echo -e "${RESET}"
-}
+        # Completion message
+        print(f"{GREEN}[INFO]{RESET} Setup complete! Brute Force Toolkit is now ready to use.")
+        print(f"{BLUE}You can now run the tool using:{RESET}")
+        print(f"{GREEN}brute --help{RESET}")
 
-main "$@"
+        print(f"{BLUE}")
+        print("████████████████████████████████████████████████████")
+        print("██                                                ██")
+        print("██           Installation Complete               ██")
+        print("██      Brute Force Toolkit Ready               ██")
+        print("██                                                ██")
+        print("████████████████████████████████████████████████████")
+        print(f"{RESET}")
+
+# Define the setup configuration
+setup(
+    name="brute-toolkit",
+    version="4.1",
+    author="LIONMAD",
+    description="Advanced brute force toolkit for penetration testing",
+    long_description=open("README.md").read() if os.path.exists("README.md") else "Advanced brute force toolkit",
+    long_description_content_type="text/markdown",
+    url="https://github.com/Midohajhouj/brute",
+    packages=find_packages(),
+    install_requires=[
+        "argparse",
+        "requests>=2.25.1",
+        "paramiko>=2.7.2",
+        "mysql-connector-python>=8.0.23",
+        "pytesseract>=0.3.8",
+        "bcrypt>=3.2.0",
+        "socks>=1.0.0",
+        "tqdm>=4.59.0",
+        "selenium>=3.141.0",
+        "beautifulsoup4>=4.9.3",
+        "dnspython>=2.1.0",
+        "python-nmap>=0.7.1",
+        "ldap3>=2.9.1",
+        "cryptography>=3.4.7",
+        "mechanize>=0.4.5",
+        "fake-useragent>=0.1.11",
+        "pyodbc>=4.0.30",
+        "psycopg2-binary>=2.8.6",
+        "pymongo>=3.11.3",
+        "redis>=3.5.3",
+        "pyfiglet>=0.8.post1",
+        "colorama>=0.4.4",
+        "scapy>=2.4.5",
+        "sqlalchemy>=1.4.7",
+        "python-whois>=0.8.0",
+        "pyOpenSSL>=20.0.1",
+        "pillow>=8.1.2"
+    ],
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: POSIX :: Linux",
+        "Development Status :: 4 - Beta",
+        "Environment :: Console",
+        "Intended Audience :: Information Technology",
+        "Intended Audience :: System Administrators",
+        "Topic :: Security",
+        "Topic :: System :: Systems Administration",
+    ],
+    python_requires='>=3.6',
+    entry_points={
+        'console_scripts': [
+            'brute=brute:main',
+        ],
+    },
+    cmdclass={
+        'install': CustomInstall,
+    },
+)
